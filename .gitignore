@@ -5,4 +5,4 @@ __pycache__
 
 data
 summaries
-model_checkpoints
+*.ckpt
