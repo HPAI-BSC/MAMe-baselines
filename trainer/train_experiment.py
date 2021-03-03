@@ -73,15 +73,15 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("dataset", help="Dataset.", type=DatasetArgs, choices=list(DatasetArgs))
-    parser.add_argument("preprocess", help="Preprocess.", type=PreproArgs, choices=list(PreproArgs))
-    parser.add_argument("architecture", help="Architecture.", type=ArchArgs, choices=list(ArchArgs))
-    parser.add_argument("batch_size", help="Learning rate.", type=int)
-    parser.add_argument("learning_rate", help="Learning rate.", type=float)
+    parser.add_argument("dataset", help="Dataset used for training.", type=DatasetArgs, choices=list(DatasetArgs))
+    parser.add_argument("preprocess", help="Image online preprocessing.", type=PreproArgs, choices=list(PreproArgs))
+    parser.add_argument("architecture", help="Architecture of the neural network.", type=ArchArgs, choices=list(ArchArgs))
+    parser.add_argument("batch_size", help="Batch size: the batch of images will be divided between available GPUs.", type=int)
+    parser.add_argument("learning_rate", help="Learning rate used for training.", type=float)
     parser.add_argument("epochs", help="Number of epochs to train the model.", type=int)
     parser.add_argument("ckpt_name", help="Retrain from already existing checkpoint.", type=str)
-    parser.add_argument("--no_ckpt", help="Avoid checkpointing.", default=False, action='store_true')
-    parser.add_argument("--pretrained", help="Train from pretrained model.", type=str, default=False)
+    parser.add_argument("--no_ckpt", help="Avoid generating checkpoints.", default=False, action='store_true')
+    parser.add_argument("--pretrained", help="Train from a pretrained model.", type=str, default=False)
     args = parser.parse_args()
 
     assert args.dataset in ppl.DATASETS

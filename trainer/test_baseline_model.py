@@ -54,11 +54,11 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("dataset", help="Dataset.", type=DatasetArgs, choices=list(DatasetArgs))
-    parser.add_argument("preprocess", help="Preprocess.", type=PreproArgs, choices=list(PreproArgs))
-    parser.add_argument("architecture", help="Architecture.", type=ArchArgs, choices=list(ArchArgs))
-    parser.add_argument("batch_size", help="Learning rate.", type=int)
-    parser.add_argument("model_ckpt", help="Path to checkpoint.", type=str, default='')
+    parser.add_argument("dataset", help="Dataset used for testing.", type=DatasetArgs, choices=list(DatasetArgs))
+    parser.add_argument("preprocess", help="Image online preprocessing.", type=PreproArgs, choices=list(PreproArgs))
+    parser.add_argument("architecture", help="Architecture of the neural network.", type=ArchArgs, choices=list(ArchArgs))
+    parser.add_argument("batch_size", help="Batch size: the batch of images will be divided between available GPUs.", type=int)
+    parser.add_argument("model_ckpt", help="Path to the trained model checkpoint to use for testing.", type=str, default='')
     args = parser.parse_args()
 
     assert args.dataset in ppl.DATASETS
