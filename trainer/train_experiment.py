@@ -3,7 +3,7 @@ import argparse
 from PIL import Image
 import torch
 
-from consts.paths import Paths
+from trainer.utils.paths import Paths
 from trainer.utils.consts import Split
 from trainer.utils.saver import Saver
 from trainer import pipelines as ppl

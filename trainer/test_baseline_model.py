@@ -4,7 +4,7 @@ import pandas as pd
 from PIL import Image
 import torch
 
-from consts.paths import Paths
+from trainer.utils.paths import Paths
 from trainer.utils.consts import Split, ArchArgs
 from trainer.utils.saver import load_checkpoint
 from trainer.utils.utils import accuracy

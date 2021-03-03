@@ -2,7 +2,7 @@ import os
 import pandas as pd
 
 from trainer.utils.consts import Split
-from consts.paths import Paths
+from trainer.utils.paths import Paths
 
 
 class MAMeDataset:
