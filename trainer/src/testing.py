@@ -1,10 +1,8 @@
-from typing import List
-
 import torch
 import numpy as np
 
 from trainer.utils.consts import Split
-from trainer.utils.pytorch_utils import squeeze_generic
+from trainer.utils.utils import squeeze_generic
 
 
 def testing(input_pipeline, model, device):
@@ -26,8 +24,3 @@ def testing(input_pipeline, model, device):
 
         pred_labels = np.argmax(pred_labels, axis=1).tolist()
     return pred_labels, true_labels, image_filenames
-
-
-def accuracy(pred_values: List[int], true_values: List[int]):
-    correct = np.sum(np.array(pred_values) == np.array(true_values))
-    return correct/len(pred_values)

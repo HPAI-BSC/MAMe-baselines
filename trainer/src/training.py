@@ -2,7 +2,7 @@ import time
 import torch
 
 from trainer.utils.consts import Split
-from trainer.utils.pytorch_utils import squeeze_generic
+from trainer.utils.utils import current_memory_usage, squeeze_generic
 from trainer.utils.saver import load_checkpoint
 
 
@@ -29,7 +29,7 @@ def train_epoch(train_loader, model, loss_function, optimizer, device, epoch):
 
         step_total = step_labels.size(0)
         step_loss = loss.item()
-        losses += step_loss*step_total
+        losses += step_loss * step_total
         total += step_total
 
         step_preds = torch.max(step_output.data, 1)[1]
@@ -38,8 +38,8 @@ def train_epoch(train_loader, model, loss_function, optimizer, device, epoch):
 
     train_loss = losses / total
     train_acc = correct / total
-    format_args = (epoch, train_acc, train_loss, time.time() - t0)
-    print('EPOCH {} :: train accuracy: {:.4f} - train loss: {:.4f} at {:.1f}s'.format(*format_args))
+    format_args = (epoch, train_acc, train_loss, time.time() - t0, current_memory_usage())
+    print('EPOCH {} :: train accuracy: {:.4f} - train loss: {:.4f} at {:.1f}s  [{} MB]'.format(*format_args))
 
 
 def val_epoch(val_loader, model, loss_function, device, epoch):
@@ -61,7 +61,7 @@ def val_epoch(val_loader, model, loss_function, device, epoch):
 
             step_total = step_labels.size(0)
             step_loss = loss.item()
-            losses += step_loss*step_total
+            losses += step_loss * step_total
             total += step_total
 
             step_preds = torch.max(step_output.data, 1)[1]
@@ -70,8 +70,8 @@ def val_epoch(val_loader, model, loss_function, device, epoch):
 
     val_loss = losses / total
     val_acc = correct / total
-    format_args = (epoch, val_acc, val_loss, time.time() - t0)
-    print('EPOCH {} :: val accuracy: {:.4f} - val loss: {:.4f} at {:.1f}s'.format(*format_args))
+    format_args = (epoch, val_acc, val_loss, time.time() - t0, current_memory_usage())
+    print('EPOCH {} :: val accuracy: {:.4f} - val loss: {:.4f} at {:.1f}s  [{} MB]'.format(*format_args))
 
 
 def training(

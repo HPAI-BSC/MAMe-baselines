@@ -7,17 +7,17 @@ import torch
 from consts.paths import Paths
 from trainer.utils.consts import Split, ArchArgs
 from trainer.utils.saver import load_checkpoint
+from trainer.utils.utils import accuracy
 from trainer import pipelines as ppl
 from trainer.utils.consts import DatasetArgs, PreproArgs
-from trainer.src.testing import testing, accuracy
+from trainer.src.testing import testing
 
 Image.MAX_IMAGE_PIXELS = None
 
-PROJECT_PATH = os.path.abspath(os.path.join(__file__, *(os.path.pardir,)*3 ))
+PROJECT_PATH = os.path.abspath(os.path.join(__file__, *(os.path.pardir,) * 2))
 
 
 def main(args):
-
     # CUDA for PyTorch
     use_cuda = torch.cuda.is_available()
     device = torch.device("cuda" if use_cuda else "cpu")
@@ -37,7 +37,7 @@ def main(args):
 
     model, _, epoch = load_checkpoint(args.model_ckpt, model)
 
-    if args.preprocess == PreproArgs.LRFS:
+    if args.preprocess in [PreproArgs.R65kFS, PreproArgs.R360kFS]:
         torch.backends.cudnn.benchmark = True
     else:
         torch.backends.cudnn.benchmark = False
@@ -60,5 +60,8 @@ if __name__ == "__main__":
     parser.add_argument("batch_size", help="Learning rate.", type=int)
     parser.add_argument("model_ckpt", help="Path to checkpoint.", type=str, default='')
     args = parser.parse_args()
+
+    assert args.dataset in ppl.DATASETS
+    assert args.preprocess in ppl.PREPROCESSES
 
     main(args)

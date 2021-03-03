@@ -1,6 +1,6 @@
 import os
 
-PROJECT_PATH = os.path.abspath(os.path.join(__file__, *(os.path.pardir for _ in range(2))))
+PROJECT_PATH = os.path.abspath(os.path.join(__file__, *(os.path.pardir,) * 2))
 DATASETS_PATH = os.path.join(PROJECT_PATH, 'dataset')
 
 
