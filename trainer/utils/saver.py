@@ -47,6 +47,31 @@ def _map_keys(state_dict):
     return state_dict
 
 
+def load_checkpoint_pretrained(model_path, model):
+    # Check working device
+    use_cuda = torch.cuda.is_available()
+    device = torch.device("cuda:0" if use_cuda else "cpu")
+
+    # Note: Input model & optimizer should be pre-defined.  This routine only updates their states.
+    if os.path.isfile(model_path):
+        print("=> loading checkpoint '{}'".format(model_path))
+        checkpoint = torch.load(model_path, map_location='cpu')
+        model_dict = model.state_dict()
+        for k, v in checkpoint.items():
+            cpt = {}
+            cpt[k] = v
+            try:
+                model_dict.update(cpt)
+                model.load_state_dict(model_dict)
+            except RuntimeError:
+                pass
+        print("=> loaded checkpoint '{}'".format(model_path))
+    else:
+        print("=> no checkpoint found at '{}'".format(model_path))
+
+    return model
+
+
 def load_checkpoint(model_path, model, optimizer=None):
     # Check working device
     use_cuda = torch.cuda.is_available()
@@ -61,11 +86,14 @@ def load_checkpoint(model_path, model, optimizer=None):
             model.load_state_dict(checkpoint['state_dict'])
         except RuntimeError:
             model.load_state_dict(_map_keys(checkpoint['state_dict']))
+        epoch = checkpoint['epoch']
+
         if optimizer:
             optimizer.load_state_dict(checkpoint['optimizer'])
-        epoch = checkpoint['epoch']
-        print("=> loaded checkpoint '{}' (epoch {})".format(model_path, checkpoint['epoch']))
+        print("=> loaded checkpoint '{}' (epoch {})".format(model_path, epoch))
     else:
         print("=> no checkpoint found at '{}'".format(model_path))
 
     return model, optimizer, epoch
+
+

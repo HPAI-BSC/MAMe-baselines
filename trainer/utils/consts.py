@@ -8,7 +8,7 @@ class Split(enum.Enum):
 
 
 class DatasetArgs(enum.Enum):
-    MAME = 'mame'
+    MAME = 'MAMe'
     TOY_MAME = 'toy_mame'
 
     def __str__(self):
@@ -16,8 +16,10 @@ class DatasetArgs(enum.Enum):
 
 
 class PreproArgs(enum.Enum):
-    HRVS = 'hrvs'
-    LRFS = 'lrfs'
+    R360kVS = 'R360k-VS'
+    R360kFS = 'R360k-FS'
+    R65kVS = 'R65k-VS'
+    R65kFS = 'R65k-FS'
 
     def __str__(self):
         return self.value
@@ -25,7 +27,13 @@ class PreproArgs(enum.Enum):
 
 class ArchArgs(enum.Enum):
     RESNET18 = 'resnet18'
+    RESNET50 = 'resnet50'
     VGG11 = 'vgg11'
+    VGG16 = 'vgg16'
+    EFFICIENTNETB0 = 'efficientnetb0'
+    EFFICIENTNETB3 = 'efficientnetb3'
+    EFFICIENTNETB7 = 'efficientnetb7'
+    DENSENET121 = 'densenet121'
 
     def __str__(self):
         return self.value

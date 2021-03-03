@@ -1,5 +1,6 @@
 import os
 import random
+import numpy as np
 from PIL import Image
 import torch
 from torch.utils.data import Dataset
@@ -9,7 +10,7 @@ import torchvision.transforms.functional as TF
 from trainer.utils.consts import Split
 
 
-class OriginalDataset(Dataset):
+class OriginalPreprocess(Dataset):
 
     def __init__(self, subset, image_paths, image_labels, include_filename=False):
         assert subset not in [attr for attr in dir(Split) if not attr.startswith('__')]
@@ -60,61 +61,45 @@ class OriginalDataset(Dataset):
             return image, label
 
 
-class DownsampledDataset(OriginalDataset):
+class DownsampledPreprocess(OriginalPreprocess):
 
     def __init__(self, *args, **kwargs):
         try:
-            size = kwargs['size']
+            self.image_size = kwargs['size']
             del kwargs['size']
         except KeyError:
-            size = (224, 224)
-        assert size[0] < 256 and size[1] < 256
-        self.size = size
-        super(DownsampledDataset, self).__init__(*args, **kwargs)
+            self.image_size = (256, 256)
+        self.crop_size = (int(self.image_size[0] * 0.875), int(self.image_size[1] * 0.875))
+        super().__init__(*args, **kwargs)
 
     def _get_transforms_list(self):
         if self.subset == Split.TRAIN:
             return_transform = [
-                transforms.Resize((256, 256)),
+                transforms.Resize(self.image_size),
                 transforms.RandomRotation(degrees=30),
-                transforms.RandomCrop(self.size),
+                transforms.RandomCrop(self.crop_size),
                 transforms.RandomHorizontalFlip(),
                 transforms.ToTensor(),
                 transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
             ]
         else:
             return_transform = [
-                transforms.Resize((256, 256)),
-                transforms.CenterCrop(self.size),
+                transforms.Resize(self.image_size),
+                transforms.CenterCrop(self.crop_size),
                 transforms.ToTensor(),
                 transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
             ]
         return return_transform
 
 
-class DownRatioDataset(OriginalDataset):
-
-    def __init__(self, *args, down_ratio=0.2):
-        assert 0.0 < down_ratio < 1.0
-        self.down_ratio = down_ratio
-        super().__init__(*args)
-
-    def _custom_img_transformation(self, image):
-        if self.down_ratio is not None:
-            width, height = image.size
-            down_w, down_h = round(width*self.down_ratio), round(height*self.down_ratio)
-            image = image.resize((down_w, down_h), Image.ANTIALIAS)
-        return image
-
-
-class DownAxisDataset(OriginalDataset):
+class ReduceKeepARPreprocess(OriginalPreprocess):
     def __init__(self, *args, **kwargs):
         try:
-            min_axis_size = kwargs['min_axis_size']
-            del kwargs['min_axis_size']
+            target_pixels = kwargs['target_pixels']
+            del kwargs['target_pixels']
         except KeyError:
-            min_axis_size = 500
-        self.min_axis_size = min_axis_size
+            target_pixels = 256*256  #65_536
+        self.target_pixels = target_pixels
         super().__init__(*args, **kwargs)
 
     @staticmethod
@@ -152,14 +137,33 @@ class DownAxisDataset(OriginalDataset):
 
     def _custom_img_transformation(self, image):
         orig_width, orig_height = image.size
-        if orig_height < orig_width:  # Landscape
-            target_height = self.min_axis_size
-            down_ratio = target_height/orig_height
-            target_width = round(orig_width * down_ratio)
-        else:  # Portrait (or squared)
-            target_width = self.min_axis_size
-            down_ratio = target_width/orig_width
-            target_height = round(orig_height * down_ratio)
+        ar = orig_width / orig_height
+        target_width = int(np.sqrt(self.target_pixels * ar))
+        target_height = int(np.sqrt(self.target_pixels / ar))
 
         image = image.resize((target_width, target_height), Image.ANTIALIAS)
         return image
+
+
+class R65kVSPreprocess(ReduceKeepARPreprocess):
+    def __init__(self, *args, **kwargs):
+        self.target_pixels = 256*256
+        super().__init__(*args, **kwargs)
+
+
+class R360kVSPreprocess(ReduceKeepARPreprocess):
+    def __init__(self, *args, **kwargs):
+        self.target_pixels = 600*600
+        super().__init__(*args, **kwargs)
+
+
+class R65kFSPreprocess(DownsampledPreprocess):
+    def __init__(self, *args, **kwargs):
+        kwargs['size'] = (256, 256)
+        super().__init__(*args, **kwargs)
+
+
+class R360kFSPreprocess(DownsampledPreprocess):
+    def __init__(self, *args, **kwargs):
+        kwargs['size'] = (600, 600)
+        super().__init__(*args, **kwargs)

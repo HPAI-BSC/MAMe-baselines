@@ -23,7 +23,7 @@ def main(args):
     device = torch.device("cuda" if use_cuda else "cpu")
 
     dataset = ppl.DATASETS[args.dataset]()
-    test_ds = ppl.PREPROCESSES[args.preprocess](Split.TEST, *dataset.get_subset(Split.TEST), include_filename=True)
+    test_ds = ppl.PREPROCESSES[args.preprocess](Split.TEST, *dataset.get_subset(Split.TEST), include_filename=True, **extra_kwargs)
 
     input_pipeline = ppl.PIPELINES[args.preprocess](
         datasets_list=[test_ds], batch_size=args.batch_size, pin_memory=True if use_cuda else False)
@@ -60,5 +60,8 @@ if __name__ == "__main__":
     parser.add_argument("batch_size", help="Learning rate.", type=int)
     parser.add_argument("model_ckpt", help="Path to checkpoint.", type=str, default='')
     args = parser.parse_args()
+
+    assert args.dataset in ppl.DATASETS
+    assert args.preprocess in ppl.PREPROCESSES
 
     main(args)
