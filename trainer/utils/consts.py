@@ -32,7 +32,6 @@ class ArchArgs(enum.Enum):
     VGG16 = 'vgg16'
     EFFICIENTNETB0 = 'efficientnetb0'
     EFFICIENTNETB3 = 'efficientnetb3'
-    EFFICIENTNETB7 = 'efficientnetb7'
     DENSENET121 = 'densenet121'
 
     def __str__(self):

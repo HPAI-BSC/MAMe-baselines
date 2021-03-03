@@ -39,7 +39,7 @@ positional arguments:
   {MAMe,toy_mame}       Dataset used for training.
   {R360k-VS,R360k-FS,R65k-VS,R65k-FS}
                         Image online preprocessing.
-  {resnet18,resnet50,vgg11,vgg16,efficientnetb0,efficientnetb3,efficientnetb7,densenet121}
+  {resnet18,resnet50,vgg11,vgg16,efficientnetb0,efficientnetb3,densenet121}
                         Architecture of the neural network.
   batch_size            Batch size: the batch of images will be divided
                         between available GPUs.
