@@ -89,6 +89,4 @@ Please cite our paper if you use this code in your own work:
 ```
 
 ## About
-This work is currently under review process at the International Journal of Computer Vision.
-
 If you have any questions about this code, please contact: Ferran Parés <ferran.pares@bsc.es>
