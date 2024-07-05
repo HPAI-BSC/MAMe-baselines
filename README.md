@@ -89,4 +89,5 @@ Please cite our paper if you use this code in your own work:
 ```
 
 ## About
-If you have any questions about this code, please contact: Ferran Parés <ferran.pares@bsc.es>
+If you have any questions about this code, please contact: <hpai@bsc.es>
+
